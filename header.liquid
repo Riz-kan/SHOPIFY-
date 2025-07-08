@@ -71,6 +71,10 @@
       color: #fff;
       transition: background 0.3s ease, box-shadow 0.3s ease;
     }
+    .main-nav.sticky-fixed {
+      position: fixed;
+      top: 0;
+    }
     .main-nav:hover {
       background: #fdfdfd;
       box-shadow: 0 1px 8px rgba(0,0,0,0.05);
@@ -295,7 +299,7 @@
       </div>
     </div>
 
-    <header class="main-nav">
+    <header id="main-header" class="main-nav{% if section.settings.sticky_behavior == 'always' %} sticky-fixed{% endif %}">
       <nav class="nav-links">
         <a href="#shop">Shop</a>
         <div class="nav-link-wrap"><a href="#about" class="trigger-about">About</a></div>
@@ -389,7 +393,43 @@
     }
 
     setupDropdown('.trigger-about', 'about-dropdown');
+
+    document.addEventListener('DOMContentLoaded', function() {
+      var header = document.getElementById('main-header');
+      var stickyBehavior = '{{ section.settings.sticky_behavior }}';
+
+      if (stickyBehavior === 'on_scroll') {
+        window.addEventListener('scroll', function() {
+          if (window.scrollY > 0) {
+            header.classList.add('sticky-fixed');
+          } else {
+            header.classList.remove('sticky-fixed');
+          }
+        });
+      }
+    });
   </script>
 
 </body>
 </html>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    {
+      "type": "select",
+      "id": "sticky_behavior",
+      "label": "Sticky header",
+      "options": [
+        { "value": "always", "label": "Always sticky" },
+        { "value": "on_scroll", "label": "Sticky on scroll" }
+      ],
+      "default": "on_scroll"
+    }
+  ],
+  "presets": [
+    { "name": "Header" }
+  ]
+}
+{% endschema %}
