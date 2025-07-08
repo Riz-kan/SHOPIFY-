@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>VYNA Header</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Helvetica Neue', sans-serif;
+    }
+
+    /* Hide full header on screens 768px and below */
+    @media (max-width: 768px) {
+      .desktop-header-only {
+        display: none !important;
+      }
+    }
+
+    .top-bar {
+      position: absolute;
+      top: 0; left: 0; width: 100%;
+      background: #111;
+      color: #fff;
+      font-size: 12px;
+      text-transform: uppercase;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 32px;
+      z-index: 20;
+    }
+    .top-bar a {
+      color: #fff;
+      text-decoration: underline;
+      margin-left: 8px;
+    }
+    .countdown-grid {
+      display: grid;
+      grid-template-columns: repeat(4, auto);
+      gap: 12px;
+      text-align: center;
+      align-items: end;
+    }
+    .cd-val {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+    .cd-label {
+      font-size: 7px;
+      letter-spacing: 1px;
+      margin-top: 1px;
+      color: #fff;
+    }
+    .main-nav {
+      position: absolute;
+      top: 28px;
+      left: 0;
+      width: 100%;
+      padding: 10px clamp(16px, 4vw, 32px) 2px;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      background: transparent;
+      z-index: 10;
+      color: #fff;
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+    }
+    .main-nav:hover {
+      background: #fdfdfd;
+      box-shadow: 0 1px 8px rgba(0,0,0,0.05);
+    }
+    .nav-links {
+      display: flex;
+      gap: 24px;
+      justify-self: start;
+    }
+    .nav-link-wrap {
+      position: relative;
+    }
+    .nav-link-wrap::after {
+      content: "";
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: #000;
+      transition: width 0.3s ease;
+    }
+    .nav-link-wrap.active::after {
+      width: 100%;
+    }
+    .nav-links a {
+      font-size: 13px;
+      text-transform: uppercase;
+      font-weight: 400;
+      color: #fff;
+      text-decoration: none;
+      letter-spacing: 1px;
+      transition: color 0.3s ease;
+    }
+    .main-nav:hover .nav-links a,
+    .main-nav:hover .logo,
+    .main-nav:hover .currency {
+      color: #000;
+    }
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      color: #fff;
+      justify-self: center;
+      transition: color 0.3s ease;
+    }
+    .nav-icons {
+      display: flex;
+      align-items: center;
+      justify-self: end;
+      height: 36px;
+    }
+    .nav-icons > *:not(:first-child) {
+      margin-left: 12px;
+    }
+    .icon-wrap,
+    .currency {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+    .nav-icons svg {
+      width: 20px;
+      height: 20px;
+      fill: none;
+      stroke: #fff;
+      stroke-width: 1.5;
+      transition: stroke 0.3s ease, transform 0.2s ease-in-out;
+      display: block;
+    }
+    .nav-icons svg:hover {
+      opacity: 0.85;
+      transform: scale(1.05);
+    }
+    .main-nav:hover svg {
+      stroke: #000;
+    }
+    .currency {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 13px;
+      color: #fff;
+      transition: color 0.3s ease;
+    }
+    .currency img {
+      width: 16px;
+      height: 12px;
+      border-radius: 2px;
+    }
+    .currency svg {
+      width: 12px;
+      height: 6px;
+      margin-left: 4px;
+      stroke-width: 1.5;
+    }
+    .cart-badge {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      width: 6px;
+      height: 6px;
+      background: #fff;
+      border-radius: 50%;
+    }
+    .full-dropdown {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      width: 100%;
+      background: linear-gradient(to bottom, #fff, #f8f8f8);
+      padding: 32px 40px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      z-index: 5;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 40px;
+      height: 65vh;
+      align-items: center;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px);
+      transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+    }
+    .full-dropdown.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    .full-dropdown a {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      text-decoration: none;
+      color: #000;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: color 0.2s ease;
+      min-height: 360px;
+    }
+    .full-dropdown a img {
+      width: 100%;
+      max-width: 220px;
+      max-height: 100%;
+      aspect-ratio: 2/3;
+      object-fit: cover;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .full-dropdown a img:hover {
+      transform: scale(1.02);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    }
+    .full-dropdown .title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-top: 2px;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    .full-dropdown .subtitle {
+      font-size: 11px;
+      color: #777;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    .full-dropdown.active .title,
+    .full-dropdown.active .subtitle {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .full-dropdown a:nth-child(1) .title,
+    .full-dropdown a:nth-child(1) .subtitle { transition-delay: 0.1s; }
+    .full-dropdown a:nth-child(2) .title,
+    .full-dropdown a:nth-child(2) .subtitle { transition-delay: 0.2s; }
+    .full-dropdown a:nth-child(3) .title,
+    .full-dropdown a:nth-child(3) .subtitle { transition-delay: 0.3s; }
+    .full-dropdown a:nth-child(4) .title,
+    .full-dropdown a:nth-child(4) .subtitle { transition-delay: 0.4s; }
+
+    @media (max-width: 768px) {
+      .full-dropdown {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        gap: 24px;
+        height: auto;
+      }
+      .full-dropdown a {
+        scroll-snap-align: center;
+        flex: 0 0 auto;
+        min-width: 220px;
+      }
+      .full-dropdown .title,
+      .full-dropdown .subtitle {
+        transition-delay: 0s !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="desktop-header-only">
+
+    <div class="top-bar">
+      <div>
+        Buy Any 2, Get 20% Off <a href="#shop">SHOP NOW</a>
+      </div>
+      <div class="countdown-grid">
+        <div><div class="cd-val days">01</div><div class="cd-label">DAY</div></div>
+        <div><div class="cd-val hrs">23</div><div class="cd-label">HRS</div></div>
+        <div><div class="cd-val mins">57</div><div class="cd-label">MIN</div></div>
+        <div><div class="cd-val secs">55</div><div class="cd-label">SEC</div></div>
+      </div>
+    </div>
+
+    <header class="main-nav">
+      <nav class="nav-links">
+        <a href="#shop">Shop</a>
+        <div class="nav-link-wrap"><a href="#about" class="trigger-about">About</a></div>
+        <a href="#journal">Journal</a>
+      </nav>
+
+      <div class="logo">VYNA</div>
+
+      <nav class="nav-icons">
+        <div class="currency">
+          <img src="https://flagcdn.com/us.svg" alt="US Flag">
+          USD&nbsp;$
+          <svg viewBox="0 0 12 6">
+            <path d="M1 1l5 4 5-4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="icon-wrap">
+          <svg viewBox="0 0 24 24">
+            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+        </div>
+        <div class="icon-wrap">
+          <svg viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+        </div>
+        <div class="icon-wrap" style="position: relative;">
+          <svg viewBox="0 0 24 24">
+            <polyline points="3,18 7,6 17,6 21,18"/>
+            <line x1="3" y1="18" x2="21" y2="18"/>
+            <path d="M8 4 Q12 0 16 4"/>
+          </svg>
+          <span class="cart-badge"></span>
+        </div>
+      </nav>
+
+      <div class="full-dropdown" id="about-dropdown">
+        <a href="#our-story">
+          <img src="https://cdn.shopify.com/s/files/1/0623/9718/6166/files/image_-_2025-06-30T064802.220.jpg?v=1751246298" alt="Our Story">
+          <span class="title">Our Story</span>
+          <span class="subtitle">Beauty with Purpose</span>
+        </a>
+        <a href="#sustainability">
+          <img src="https://cdn.shopify.com/s/files/1/0623/9718/6166/files/image_-_2025-06-30T070937.118.jpg?v=1751247585" alt="Sustainability">
+          <span class="title">Sustainability</span>
+          <span class="subtitle">Eco-Conscious Formulas</span>
+        </a>
+        <a href="#craft">
+          <img src="https://cdn.shopify.com/s/files/1/0623/9718/6166/files/image_-_2025-06-30T093241.342.jpg?v=1751256175" alt="Craftsmanship">
+          <span class="title">Craftsmanship</span>
+          <span class="subtitle">Refined Lipstick Production</span>
+        </a>
+        <a href="#ethics">
+          <img src="https://cdn.shopify.com/s/files/1/0623/9718/6166/files/image_-_2025-06-30T073013.613.jpg?v=1751248822" alt="Ethics">
+          <span class="title">Ethics</span>
+          <span class="subtitle">Vegan & Cruelty-Free</span>
+        </a>
+      </div>
+    </header>
+
+  </div>
+
+  <script>
+    function setupDropdown(triggerSelector, dropdownId) {
+      const trigger = document.querySelector(triggerSelector);
+      const dropdown = document.getElementById(dropdownId);
+      const wrapper = trigger.closest('.nav-link-wrap');
+
+      trigger.addEventListener('mouseenter', () => {
+        dropdown.classList.add('active');
+        wrapper.classList.add('active');
+      });
+      trigger.addEventListener('mouseleave', () => {
+        setTimeout(() => {
+          if (!dropdown.matches(':hover')) {
+            dropdown.classList.remove('active');
+            wrapper.classList.remove('active');
+          }
+        }, 100);
+      });
+      dropdown.addEventListener('mouseenter', () => {
+        dropdown.classList.add('active');
+        wrapper.classList.add('active');
+      });
+      dropdown.addEventListener('mouseleave', () => {
+        dropdown.classList.remove('active');
+        wrapper.classList.remove('active');
+      });
+    }
+
+    setupDropdown('.trigger-about', 'about-dropdown');
+  </script>
+
+</body>
+</html>
