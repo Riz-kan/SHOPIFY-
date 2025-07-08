@@ -71,6 +71,27 @@
       color: #fff;
       transition: background 0.3s ease, box-shadow 0.3s ease;
     }
+    .main-nav.sticky-fixed {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: #fff;
+      color: #000;
+      z-index: 30;
+      box-shadow: 0 1px 8px rgba(0,0,0,0.05);
+    }
+    .main-nav.sticky-fixed.always {
+      top: 28px;
+    }
+    .main-nav.sticky-fixed .nav-links a,
+    .main-nav.sticky-fixed .logo,
+    .main-nav.sticky-fixed .currency {
+      color: #000;
+    }
+    .main-nav.sticky-fixed svg {
+      stroke: #000;
+    }
     .main-nav:hover {
       background: #fdfdfd;
       box-shadow: 0 1px 8px rgba(0,0,0,0.05);
@@ -295,7 +316,7 @@
       </div>
     </div>
 
-    <header class="main-nav">
+    <header class="main-nav" data-sticky-behavior="always">
       <nav class="nav-links">
         <a href="#shop">Shop</a>
         <div class="nav-link-wrap"><a href="#about" class="trigger-about">About</a></div>
@@ -388,7 +409,30 @@
       });
     }
 
-    setupDropdown('.trigger-about', 'about-dropdown');
+    document.addEventListener('DOMContentLoaded', function() {
+      setupDropdown('.trigger-about', 'about-dropdown');
+
+      const header = document.querySelector('.main-nav');
+      const stickyBehavior = header.dataset.stickyBehavior;
+      let lastScroll = window.pageYOffset;
+
+      function handleScroll() {
+        const current = window.pageYOffset;
+        if (stickyBehavior === 'always') {
+          header.classList.add('sticky-fixed', 'always');
+        } else if (stickyBehavior === 'on-scroll-up') {
+          if (current < lastScroll) {
+            header.classList.add('sticky-fixed');
+          } else {
+            header.classList.remove('sticky-fixed');
+          }
+          lastScroll = current;
+        }
+      }
+
+      document.addEventListener('scroll', handleScroll);
+      handleScroll();
+    });
   </script>
 
 </body>
