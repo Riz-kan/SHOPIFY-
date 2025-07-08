@@ -71,6 +71,28 @@
       color: #fff;
       transition: background 0.3s ease, box-shadow 0.3s ease;
     }
+
+    /* Sticky behaviour */
+    .main-nav.sticky-fixed {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 30;
+      background: #fff;
+      color: #000;
+      box-shadow: 0 1px 8px rgba(0,0,0,0.05);
+    }
+    body.sticky-always .main-nav.sticky-fixed {
+      top: 28px; /* offset for top bar */
+    }
+    .main-nav.sticky-fixed .nav-links a,
+    .main-nav.sticky-fixed .logo,
+    .main-nav.sticky-fixed .currency {
+      color: #000;
+    }
+    .main-nav.sticky-fixed svg {
+      stroke: #000;
+    }
     .main-nav:hover {
       background: #fdfdfd;
       box-shadow: 0 1px 8px rgba(0,0,0,0.05);
@@ -389,6 +411,28 @@
     }
 
     setupDropdown('.trigger-about', 'about-dropdown');
+
+    const stickyBehavior = '{{ settings.sticky_behavior | default: "on-scroll-up" }}';
+    const headerEl = document.querySelector('.main-nav');
+    let lastScrollPos = window.pageYOffset;
+
+    function updateSticky() {
+      if (stickyBehavior === 'always') {
+        document.body.classList.add('sticky-always');
+        headerEl.classList.add('sticky-fixed');
+        return;
+      }
+      const current = window.pageYOffset;
+      if (current < lastScrollPos && current > 0) {
+        headerEl.classList.add('sticky-fixed');
+      } else {
+        headerEl.classList.remove('sticky-fixed');
+      }
+      lastScrollPos = current;
+    }
+
+    window.addEventListener('scroll', updateSticky);
+    updateSticky();
   </script>
 
 </body>
