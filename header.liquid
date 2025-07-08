@@ -32,7 +32,7 @@
       justify-content: space-between;
       align-items: center;
       padding: 4px 32px;
-      z-index: 20;
+      z-index: 40; /* ensure the top bar always overlays the nav */
     }
     .top-bar a {
       color: #fff;
@@ -81,8 +81,8 @@
       z-index: 30;
       box-shadow: 0 1px 8px rgba(0,0,0,0.05);
     }
-    .main-nav.sticky-fixed.always {
-      top: 28px;
+    .main-nav.sticky-fixed.offset-top {
+      top: 28px; /* account for the top bar when it is visible */
     }
     .main-nav.sticky-fixed .nav-links a,
     .main-nav.sticky-fixed .logo,
@@ -302,6 +302,8 @@
 </head>
 <body>
 
+  {% assign sticky_behavior = settings.sticky_behavior | default: 'always' %}
+
   <div class="desktop-header-only">
 
     <div class="top-bar">
@@ -316,7 +318,7 @@
       </div>
     </div>
 
-    <header class="main-nav" data-sticky-behavior="always">
+    <header class="main-nav" data-sticky-behavior="{{ sticky_behavior }}">
       <nav class="nav-links">
         <a href="#shop">Shop</a>
         <div class="nav-link-wrap"><a href="#about" class="trigger-about">About</a></div>
@@ -413,13 +415,21 @@
       setupDropdown('.trigger-about', 'about-dropdown');
 
       const header = document.querySelector('.main-nav');
-      const stickyBehavior = header.dataset.stickyBehavior;
+      const stickyBehavior = header.dataset.stickyBehavior || 'always';
+      const topBar = document.querySelector('.top-bar');
+      const topHeight = topBar ? topBar.offsetHeight : 0;
       let lastScroll = window.pageYOffset;
 
       function handleScroll() {
         const current = window.pageYOffset;
+
         if (stickyBehavior === 'always') {
-          header.classList.add('sticky-fixed', 'always');
+          header.classList.add('sticky-fixed');
+          if (current > topHeight) {
+            header.classList.remove('offset-top');
+          } else {
+            header.classList.add('offset-top');
+          }
         } else if (stickyBehavior === 'on-scroll-up') {
           if (current < lastScroll) {
             header.classList.add('sticky-fixed');
