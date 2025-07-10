@@ -1,395 +1,1011 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>VYNA Header</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    body {
-      font-family: 'Helvetica Neue', sans-serif;
-    }
 
-    /* Hide full header on screens 768px and below */
-    @media (max-width: 768px) {
-      .desktop-header-only {
-        display: none !important;
-      }
-    }
 
-    .top-bar {
-      position: absolute;
-      top: 0; left: 0; width: 100%;
-      background: #111;
-      color: #fff;
-      font-size: 12px;
-      text-transform: uppercase;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 4px 32px;
-      z-index: 20;
-    }
-    .top-bar a {
-      color: #fff;
-      text-decoration: underline;
-      margin-left: 8px;
-    }
-    .countdown-grid {
-      display: grid;
-      grid-template-columns: repeat(4, auto);
-      gap: 12px;
-      text-align: center;
-      align-items: end;
-    }
-    .cd-val {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 1px;
-    }
-    .cd-label {
-      font-size: 7px;
-      letter-spacing: 1px;
-      margin-top: 1px;
-      color: #fff;
-    }
-    .main-nav {
-      position: absolute;
-      top: 28px;
-      left: 0;
-      width: 100%;
-      padding: 10px clamp(16px, 4vw, 32px) 2px;
-      display: grid;
-      grid-template-columns: 1fr auto 1fr;
-      align-items: center;
-      background: transparent;
-      z-index: 10;
-      color: #fff;
-      transition: background 0.3s ease, box-shadow 0.3s ease;
-    }
-    .main-nav:hover {
-      background: #fdfdfd;
-      box-shadow: 0 1px 8px rgba(0,0,0,0.05);
-    }
-    .nav-links {
-      display: flex;
-      gap: 24px;
-      justify-self: start;
-    }
-    .nav-link-wrap {
-      position: relative;
-    }
-    .nav-link-wrap::after {
-      content: "";
-      position: absolute;
-      bottom: -4px;
-      left: 0;
-      width: 0;
-      height: 2px;
-      background: #000;
-      transition: width 0.3s ease;
-    }
-    .nav-link-wrap.active::after {
-      width: 100%;
-    }
-    .nav-links a {
-      font-size: 13px;
-      text-transform: uppercase;
-      font-weight: 400;
-      color: #fff;
-      text-decoration: none;
-      letter-spacing: 1px;
-      transition: color 0.3s ease;
-    }
-    .main-nav:hover .nav-links a,
-    .main-nav:hover .logo,
-    .main-nav:hover .currency {
-      color: #000;
-    }
-    .logo {
-      font-family: 'Playfair Display', serif;
-      font-size: 24px;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-      color: #fff;
-      justify-self: center;
-      transition: color 0.3s ease;
-    }
-    .nav-icons {
-      display: flex;
-      align-items: center;
-      justify-self: end;
-      height: 36px;
-    }
-    .nav-icons > *:not(:first-child) {
-      margin-left: 12px;
-    }
-    .icon-wrap,
-    .currency {
-      height: 100%;
-      display: flex;
-      align-items: center;
-      cursor: pointer;
-    }
-    .nav-icons svg {
-      width: 20px;
-      height: 20px;
-      fill: none;
-      stroke: #fff;
-      stroke-width: 1.5;
-      transition: stroke 0.3s ease, transform 0.2s ease-in-out;
-      display: block;
-    }
-    .nav-icons svg:hover {
-      opacity: 0.85;
-      transform: scale(1.05);
-    }
-    .main-nav:hover svg {
-      stroke: #000;
-    }
-    .currency {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      font-size: 13px;
-      color: #fff;
-      transition: color 0.3s ease;
-    }
-    .currency img {
-      width: 16px;
-      height: 12px;
-      border-radius: 2px;
-    }
-    .currency svg {
-      width: 12px;
-      height: 6px;
-      margin-left: 4px;
-      stroke-width: 1.5;
-    }
-    .cart-badge {
-      position: absolute;
-      top: 2px;
-      right: 2px;
-      width: 6px;
-      height: 6px;
-      background: #fff;
-      border-radius: 50%;
-    }
-    .full-dropdown {
-      position: absolute;
-      top: calc(100% + 8px);
-      left: 0;
-      width: 100%;
-      background: linear-gradient(to bottom, #fff, #f8f8f8);
-      padding: 32px 40px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-      z-index: 5;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 40px;
-      height: 65vh;
-      align-items: center;
-      opacity: 0;
-      visibility: hidden;
-      transform: translateY(10px);
-      transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
-    }
-    .full-dropdown.active {
-      opacity: 1;
-      visibility: visible;
-      transform: translateY(0);
-    }
-    .full-dropdown a {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      text-decoration: none;
-      color: #000;
-      font-size: 14px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      transition: color 0.2s ease;
-      min-height: 360px;
-    }
-    .full-dropdown a img {
-      width: 100%;
-      max-width: 220px;
-      max-height: 100%;
-      aspect-ratio: 2/3;
-      object-fit: cover;
-      border-radius: 6px;
-      margin-bottom: 10px;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .full-dropdown a img:hover {
-      transform: scale(1.02);
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-    }
-    .full-dropdown .title {
-      font-size: 14px;
-      font-weight: 600;
-      margin-top: 2px;
-      opacity: 0;
-      transform: translateY(8px);
-      transition: opacity 0.4s ease, transform 0.4s ease;
-    }
-    .full-dropdown .subtitle {
-      font-size: 11px;
-      color: #777;
-      opacity: 0;
-      transform: translateY(8px);
-      transition: opacity 0.4s ease, transform 0.4s ease;
-    }
-    .full-dropdown.active .title,
-    .full-dropdown.active .subtitle {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    .full-dropdown a:nth-child(1) .title,
-    .full-dropdown a:nth-child(1) .subtitle { transition-delay: 0.1s; }
-    .full-dropdown a:nth-child(2) .title,
-    .full-dropdown a:nth-child(2) .subtitle { transition-delay: 0.2s; }
-    .full-dropdown a:nth-child(3) .title,
-    .full-dropdown a:nth-child(3) .subtitle { transition-delay: 0.3s; }
-    .full-dropdown a:nth-child(4) .title,
-    .full-dropdown a:nth-child(4) .subtitle { transition-delay: 0.4s; }
+{% liquid
+  assign order = 'logo,menu,localization,search,mobile_search,actions'
 
-    @media (max-width: 768px) {
-      .full-dropdown {
-        display: flex;
-        overflow-x: auto;
-        scroll-snap-type: x mandatory;
-        gap: 24px;
-        height: auto;
-      }
-      .full-dropdown a {
-        scroll-snap-align: center;
-        flex: 0 0 auto;
-        min-width: 220px;
-      }
-      .full-dropdown .title,
-      .full-dropdown .subtitle {
-        transition-delay: 0s !important;
-      }
-    }
-  </style>
-</head>
-<body>
+  if shop.customer_accounts_enabled
+    assign order = 'mobile_search,logo,menu,localization,search,actions'
+  endif
 
-  <div class="desktop-header-only">
+  assign rows = 'top,bottom' | split: ','
+  assign search_style = 'none'
 
-    <div class="top-bar">
-      <div>
-        Buy Any 2, Get 20% Off <a href="#shop">SHOP NOW</a>
+  if section.settings.show_search
+    assign search_style = 'modal'
+  endif
+
+  if section.settings.enable_transparent_header_home and template.name == 'index'
+    assign transparent = 'always'
+    assign transparent_color_scheme = section.settings.home_color_scheme
+  elsif section.settings.enable_transparent_header_product and template.name == 'product'
+    assign transparent = 'always'
+    assign transparent_color_scheme = section.settings.product_color_scheme
+  elsif section.settings.enable_transparent_header_collection and template.name == 'collection'
+    assign transparent = 'always'
+    assign transparent_color_scheme = section.settings.collection_color_scheme
+  endif
+
+  if section.settings.enable_sticky_header == 'always'
+    assign sticky = 'always'
+  elsif section.settings.enable_sticky_header == 'scroll-up'
+    assign sticky = 'scroll-up'
+  endif
+
+  if transparent and sticky
+    assign transparent = 'not-sticky'
+  endif
+
+  if transparent
+    if transparent_color_scheme == 'inverse'
+      assign transparent_color_scheme = 'color-' | append: section.settings.color_scheme_transparent
+    else
+      assign transparent_color_scheme = 'color-' | append: section.settings.color_scheme_top
+    endif
+  endif
+
+  capture logo
+    content_for 'block', type: '_header-logo', id: 'header-logo'
+  endcapture
+
+  capture menu
+    content_for 'block', type: '_header-menu', id: 'header-menu'
+  endcapture
+
+  capture mobile_menu
+    content_for 'block', type: '_header-menu', id: 'header-menu', variant: 'mobile'
+  endcapture
+
+  capture navigation_bar
+    content_for 'block', type: '_header-menu', id: 'header-menu', variant: 'navigation_bar', transparent: transparent
+  endcapture
+
+  capture actions
+    render 'header-actions'
+  endcapture
+
+  if shop.customer_accounts_enabled
+    assign search_class = 'mobile:hidden'
+  endif
+
+  if section.settings.search_position == 'left'
+    if shop.customer_accounts_enabled
+      assign order = 'mobile_search,logo,search,menu,localization,actions'
+    else
+      assign order = 'logo,search,menu,localization,mobile_search,actions'
+    endif
+  endif
+  capture search
+    render 'search', style: search_style, class: search_class
+  endcapture
+
+  # Skip mobile search under specific conditions:
+  # Always render if search_row is bottom
+  # Don't render when shop.customer_accounts_enabled is false and search_position is left and search_style is not none
+  assign skip_mobile_search = false
+  if shop.customer_accounts_enabled == false and section.settings.search_position == 'left' and search_style != 'none'
+    assign skip_mobile_search = true
+  endif
+
+  if section.settings.search_row == 'bottom' or search_style != 'none' and skip_mobile_search == false
+    # Mobile search duplicate for when search is not in the right order for mobile layout
+    capture mobile_search
+      render 'search', class: 'desktop:hidden', style: search_style
+    endcapture
+  endif
+
+  assign show_language = section.settings.show_language
+  if localization.available_languages.size <= 1
+    assign show_language = false
+  endif
+
+  assign show_country = section.settings.show_country
+  if localization.available_countries.size <= 1
+    assign show_country = false
+  endif
+
+  if show_country or show_language
+    capture localization_markup
+      render 'dropdown-localization', show_country: show_country, show_language: show_language, country_style: section.settings.country_selector_style, localization_position: section.settings.localization_position
+    endcapture
+  endif
+
+  assign bottom_row_blocks = ''
+
+  if section.settings.menu_row == 'bottom'
+    assign bottom_row_blocks = bottom_row_blocks | append: 'menu,'
+  endif
+
+  if section.settings.search_style != 'none'
+    if section.settings.search_row == 'bottom'
+      assign bottom_row_blocks = bottom_row_blocks | append: 'search,'
+    endif
+  endif
+
+  if section.settings.show_country or section.settings.show_language
+    if section.settings.localization_row == 'bottom'
+      assign bottom_row_blocks = bottom_row_blocks | append: 'localization,'
+    endif
+  endif
+
+  assign bottom_row_blocks = bottom_row_blocks | split: ',' | compact
+
+  if section.settings.section_height == 'compact'
+    assign header_height_class = ' header--compact'
+  endif
+
+  if bottom_row_blocks.size > 0 and section.settings.color_scheme_top.settings.background.rgb == section.settings.color_scheme_bottom.settings.background.rgb and section.settings.divider_width == 0
+    assign collapse_header_paddings_class = 'header--collapse-row-paddings'
+  endif
+
+  assign class = 'header'
+
+  if transparent_color_scheme
+    assign class = class | append: ' ' | append: transparent_color_scheme
+  endif
+
+  if section.settings.color_scheme_top.settings.background.alpha != 1
+    assign class = class | append: ' ' | append: 'header--inherit-color-scheme-on-menu-open'
+  endif
+
+  if header_height_class
+    assign class = class | append: ' ' | append: header_height_class
+  endif
+
+  if collapse_header_paddings_class
+    assign class = class | append: ' ' | append: collapse_header_paddings_class
+  endif
+%}
+
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "Organization",
+    "name": {{ shop.name | json }},
+    {% if settings.logo %}
+      "logo": {{ settings.logo | image_url: width: 500 | prepend: "https:" | json }},
+    {% endif %}
+    "url": {{ request.origin | append: page.url | json }}
+  }
+</script>
+
+<header-component
+  id="header-component"
+  class="{{ class }}"
+  {% if transparent %}
+    transparent="{{ transparent }}"
+  {% endif %}
+  {% if sticky %}
+    sticky="{{ sticky }}"
+  {% endif %}
+  data-skip-node-update
+  data-scroll-direction="none"
+>
+  {% for row in rows %}
+    {% liquid
+      assign scheme = 'color_scheme_' | append: row
+      assign class = 'header__row header__row--[row] color-[row_scheme] section section--full-width-margin section--[section-width]' | replace: '[row]', row | replace: '[row_scheme]', section.settings[scheme] | replace: '[section-width]', section.settings.section_width
+
+      case row
+        when 'top'
+          assign first = mobile_menu
+
+          if bottom_row_blocks.size > 0 and section.settings.divider_size == 'page-width'
+            assign class = class | append: ' divider--page-width'
+          endif
+
+          if bottom_row_blocks.size > 0
+            assign border_bottom_setting_id = 'divider_width'
+          else
+            assign border_bottom_setting_id = 'border_width'
+          endif
+        when 'bottom'
+          assign first = ''
+          assign class = class | append: ' mobile:hidden'
+
+          assign border_bottom_setting_id = 'border_width'
+      endcase
+
+      assign style = '--border-bottom-width: [width]px; ' | replace: '[width]', section.settings[border_bottom_setting_id]
+
+      if row == 'top'
+        assign style = style | append: '--border-bottom-width-mobile: [width]px; ' | replace: '[width]', section.settings.border_width
+      endif
+    %}
+
+    {% capture content %}
+      {% render 'header-row',
+        row: row,
+        order: order,
+        settings: section.settings,
+        first: first,
+        logo: logo,
+        menu: menu,
+        actions: actions,
+        localization: localization_markup,
+        search: search,
+        mobile_search: mobile_search
+      %}
+    {% endcapture %}
+
+    {% assign content = content | strip %}
+    {% if content != blank %}
+      <div
+        class="{{ class | strip }}"
+        ref="headerRowTop"
+        {%- if style != blank -%}
+          style="{{ style | strip }}"
+        {%- endif -%}
+      >
+        <div class="header__columns spacing-style">
+          {{ content }}
+        </div>
       </div>
-      <div class="countdown-grid">
-        <div><div class="cd-val days">01</div><div class="cd-label">DAY</div></div>
-        <div><div class="cd-val hrs">23</div><div class="cd-label">HRS</div></div>
-        <div><div class="cd-val mins">57</div><div class="cd-label">MIN</div></div>
-        <div><div class="cd-val secs">55</div><div class="cd-label">SEC</div></div>
-      </div>
+    {% endif %}
+  {% endfor %}
+
+  {% if navigation_bar != blank %}
+    <div class="header__row header__row--mobile desktop:hidden color-{{ section.settings.color_scheme_bottom }}">
+      {{ navigation_bar }}
     </div>
+  {% endif %}
+</header-component>
 
-    <header class="main-nav">
-      <nav class="nav-links">
-        <a href="#shop">Shop</a>
-        <div class="nav-link-wrap"><a href="#about" class="trigger-about">About</a></div>
-        <a href="#journal">Journal</a>
-      </nav>
+<script
+  src="{{ 'header.js' | asset_url }}"
+  type="module"
+></script>
 
-      <div class="logo">VYNA</div>
+{% stylesheet %}
+  body {
+    --header-height: 0px;
+    --header-group-height: var(--header-height);
+  }
 
-      <nav class="nav-icons">
-        <div class="currency">
-          <img src="https://flagcdn.com/us.svg" alt="US Flag">
-          USD&nbsp;$
-          <svg viewBox="0 0 12 6">
-            <path d="M1 1l5 4 5-4" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-        <div class="icon-wrap">
-          <svg viewBox="0 0 24 24">
-            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
-            <circle cx="12" cy="7" r="4"/>
-          </svg>
-        </div>
-        <div class="icon-wrap">
-          <svg viewBox="0 0 24 24">
-            <circle cx="11" cy="11" r="8"/>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-          </svg>
-        </div>
-        <div class="icon-wrap" style="position: relative;">
-          <svg viewBox="0 0 24 24">
-            <polyline points="3,18 7,6 17,6 21,18"/>
-            <line x1="3" y1="18" x2="21" y2="18"/>
-            <path d="M8 4 Q12 0 16 4"/>
-          </svg>
-          <span class="cart-badge"></span>
-        </div>
-      </nav>
+  body:has(> #header-group > header) {
+    --header-height: 60px;
+  }
 
-      <div class="full-dropdown" id="about-dropdown">
-        <a href="#our-story">
-          <img src="https://cdn.shopify.com/s/files/1/0623/9718/6166/files/image_-_2025-06-30T064802.220.jpg?v=1751246298" alt="Our Story">
-          <span class="title">Our Story</span>
-          <span class="subtitle">Beauty with Purpose</span>
-        </a>
-        <a href="#sustainability">
-          <img src="https://cdn.shopify.com/s/files/1/0623/9718/6166/files/image_-_2025-06-30T070937.118.jpg?v=1751247585" alt="Sustainability">
-          <span class="title">Sustainability</span>
-          <span class="subtitle">Eco-Conscious Formulas</span>
-        </a>
-        <a href="#craft">
-          <img src="https://cdn.shopify.com/s/files/1/0623/9718/6166/files/image_-_2025-06-30T093241.342.jpg?v=1751256175" alt="Craftsmanship">
-          <span class="title">Craftsmanship</span>
-          <span class="subtitle">Refined Lipstick Production</span>
-        </a>
-        <a href="#ethics">
-          <img src="https://cdn.shopify.com/s/files/1/0623/9718/6166/files/image_-_2025-06-30T073013.613.jpg?v=1751248822" alt="Ethics">
-          <span class="title">Ethics</span>
-          <span class="subtitle">Vegan & Cruelty-Free</span>
-        </a>
-      </div>
-    </header>
+  body:has(> #header-group:empty) {
+    --header-group-height: 0px;
+  }
 
-  </div>
+  .header[transparent] {
+    --language-button-background-color: transparent;
+    --language-button-border-color: transparent;
+    /* used to apply transparency to .header__row, will only ever be transparent or unset */
+    --header-bg-color: transparent;
+    /* used to display the appropriate logo based on transparency state */
+    --header-logo-display: none;
+    --header-logo-inverse-display: block;
 
-  <script>
-    function setupDropdown(triggerSelector, dropdownId) {
-      const trigger = document.querySelector(triggerSelector);
-      const dropdown = document.getElementById(dropdownId);
-      const wrapper = trigger.closest('.nav-link-wrap');
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    /* transparent color scheme on .header should never apply its background color */
+    background-color: transparent;
+    z-index: var(--layer-overlay);
 
-      trigger.addEventListener('mouseenter', () => {
-        dropdown.classList.add('active');
-        wrapper.classList.add('active');
-      });
-      trigger.addEventListener('mouseleave', () => {
-        setTimeout(() => {
-          if (!dropdown.matches(':hover')) {
-            dropdown.classList.remove('active');
-            wrapper.classList.remove('active');
-          }
-        }, 100);
-      });
-      dropdown.addEventListener('mouseenter', () => {
-        dropdown.classList.add('active');
-        wrapper.classList.add('active');
-      });
-      dropdown.addEventListener('mouseleave', () => {
-        dropdown.classList.remove('active');
-        wrapper.classList.remove('active');
-      });
+    &[transparent='not-sticky'][data-sticky-state='active'],
+    &:has(
+        .header__row:hover,
+        .mega-menu__list:is(:hover),
+        .header-menu:is([aria-expanded='true']),
+        nav[header-menu]:is(:focus-within),
+        .menu-list__link[data-animating],
+        .account-popover[open],
+        .localization-wrapper:not([hidden])
+      ) {
+      /* should be opaque, negate all transparent properties */
+      --header-logo-display: unset;
+      --header-logo-inverse-display: unset;
+      --header-bg-color: unset;
+      --color-foreground: inherit;
+      --color-background: inherit;
+      --color-border: inherit;
     }
 
-    setupDropdown('.trigger-about', 'about-dropdown');
-  </script>
+    .header__row {
+      transition: color var(--animation-speed) var(--animation-easing),
+        border-color var(--animation-speed) var(--animation-easing),
+        background-color var(--animation-speed) var(--animation-easing);
+    }
+  }
 
-</body>
-</html>
+  :is(
+      .header[transparent]:not([data-sticky-state='active']),
+      .header[transparent='always'][data-sticky-state='active'],
+      .account-popover[open],
+      .localization-wrapper:not([hidden])
+    )
+    .header__row:not(:hover):not(
+      :has(
+          .header-menu[aria-expanded='true'],
+          .menu-list__link[data-animating],
+          .account-popover[open],
+          .localization-wrapper:not([hidden])
+        )
+    ) {
+    /* while transparent, header-row ignores its color-scheme settings, pull from the header-component */
+    --color-foreground: inherit;
+    --color-border: inherit;
+    --color-primary-button-background: inherit;
+    --color-primary-button-text: inherit;
+  }
+
+  .header--inherit-color-scheme-on-menu-open:has(
+      .mega-menu__list:is(:hover),
+      .header-menu:is([aria-expanded='true']),
+      nav[header-menu]:is(:focus-within),
+      .menu-list__link[data-animating]
+    )
+    .header__row {
+    --color-foreground: inherit;
+    --color-background: inherit;
+    --color-border: inherit;
+  }
+
+  .header-section {
+    position: relative;
+  }
+
+  #header-group:has(#header-component[sticky]) {
+    display: contents;
+  }
+
+  .header-section:has(> #header-component[sticky='always']),
+  .header-section:has(> #header-component[sticky='scroll-up'][data-sticky-state='active']) {
+    position: sticky;
+    /* Use -1 instead of 0 so intersection observer can track sticky state */
+    top: -1px;
+    z-index: var(--layer-sticky);
+  }
+
+  .header[data-sticky-state] {
+    transition: opacity var(--animation-speed) var(--animation-easing);
+    opacity: 1;
+  }
+
+  .header[data-sticky-state='active'] {
+    view-transition-name: sticky-header;
+  }
+
+  .header[data-sticky-state='idle'],
+  .header[data-sticky-state='active'][data-animating] {
+    opacity: 0;
+  }
+
+  .header__row {
+    position: relative;
+    /* will default to bg from its color scheme unless --header-bg-color is transparent */
+    background-color: var(--header-bg-color, var(--color-background));
+  }
+
+  .header__row--top:not(.divider--page-width),
+  .header__row--top.divider--page-width .header__columns,
+  .header__row--bottom {
+    border-bottom: var(--border-bottom-width) solid var(--color-border);
+  }
+
+  @media screen and (max-width: 749px) {
+    .header__row--top:not(.divider--page-width),
+    .header__row--top.divider--page-width .header__columns {
+      border-bottom-width: var(--border-bottom-width-mobile);
+    }
+  }
+
+  .header__row.divider--page-width:not(.section--page-width) .header__columns {
+    @media screen and (min-width: 750px) {
+      padding-inline-start: 0;
+      padding-inline-end: 0;
+      margin-inline-start: var(--page-margin);
+      margin-inline-end: var(--page-margin);
+    }
+  }
+
+  .header__column {
+    display: flex;
+    align-items: center;
+    /* on mobile, header__column nodes are ignored to create a new grid-template-area based on all visible content */
+    @media screen and (max-width: 749px) {
+      display: contents;
+    }
+  }
+
+  .header__column--left,
+  .header__column--center {
+    gap: var(--gap-xl);
+    grid-area: left;
+  }
+
+  .header__column--center {
+    justify-content: center;
+    grid-area: center;
+
+    header-menu:only-child .overflow-menu::part(list) {
+      justify-content: center;
+    }
+  }
+
+  .header__column--right {
+    gap: var(--gap-xl);
+    justify-content: flex-end;
+    grid-area: right;
+
+    .overflow-menu::part(list) {
+      justify-content: flex-end;
+    }
+  }
+
+  .header__columns {
+    display: grid;
+    grid-template-areas: 'left center right';
+    grid-gap: var(--gap-xl);
+    grid-template-columns: var(--header-template-columns);
+
+    /* Three column layout */
+    --header-left: 1fr;
+    --header-center: auto;
+    --header-right: 1fr;
+    --header-template-columns: var(--header-left) var(--header-center) var(--header-right);
+
+    /* Mobile layout */
+    --header-mobile-bookend: 44px;
+
+    /* If menu is in center column */
+    &:has(.header__column--center header-menu) {
+      --header-center: auto;
+      --header-left: minmax(max-content, 1fr);
+      --header-right: minmax(max-content, 1fr);
+    }
+
+    /* If there is no center column, make the column the menu is in grow eagerly */
+    &:where(:not(:has(.header__column--center))) {
+      @media screen and (min-width: 750px) {
+        grid-template-areas: 'left right';
+        --header-template-columns: var(--header-left) var(--header-right);
+      }
+
+      /* If the header-menu is in the right column */
+      &:has(.header__column--right header-menu) {
+        --header-right: auto;
+        --header-left: minmax(max-content, 1fr);
+      }
+      /* If the header-menu is in the left column */
+      &:has(.header__column--left header-menu) {
+        --header-left: auto;
+        --header-right: minmax(max-content, 1fr);
+      }
+    }
+
+    @media screen and (max-width: 749px) {
+      --header-template-columns: var(--header-mobile-bookend) var(--header-mobile-bookend) 1fr
+        var(--header-mobile-bookend) var(--header-mobile-bookend);
+      grid-template-areas: 'leftA leftB center rightA rightB';
+      grid-column: span 3;
+      column-gap: 0;
+      align-items: center;
+      padding-block: 0;
+      padding-inline: 0 var(--padding-3xs);
+
+      .header-logo {
+        grid-area: center;
+      }
+
+      &:not(:has(header-actions)) .search-action {
+        grid-area: leftB;
+      }
+
+      &:not(:has(.account-actions)) .search-action {
+        grid-area: rightA;
+      }
+
+      .search-action {
+        grid-area: leftB;
+      }
+
+      header-actions {
+        grid-area: rightB;
+      }
+    }
+  }
+
+  /* Single column layout if there are no columns within */
+  .header__columns:not(:has(.header__column)) {
+    grid-template-columns: 1fr;
+  }
+
+  /* Set header paddings based on height setting */
+  .header {
+    --header-padding: var(--padding-sm);
+    --font-paragraph--line-height: 1;
+  }
+
+  .header.header--compact {
+    --header-padding: var(--padding-2xs);
+  }
+
+  .header__columns {
+    --padding-block-start: var(--header-padding);
+    --padding-block-end: var(--header-padding);
+  }
+
+  .header:not(.header--compact) .header__row--bottom {
+    --header-padding: var(--padding-xs);
+  }
+
+  .header--collapse-row-paddings {
+    .header__row--top .header__columns {
+      --padding-block-end: 0px;
+    }
+    .header__row--bottom .header__columns {
+      --padding-block-start: 0px;
+    }
+  }
+
+  /* When the header is transparent, add a margin to a potential header-section below it */
+  .header-section:has(.header[transparent]) + .shopify-section {
+    margin-top: var(--header-height);
+  }
+
+  /* When the header is transparent, and when there is no header-section below it, offset the first main-section with
+   * the height of the header
+   */
+  body:has(> #header-group #header-component[transparent]):not(:has(> #header-group .header-section + .shopify-section))
+    > main
+    > .shopify-section:first-child
+    .section:not(.disable-section-top-offset) {
+    &.spacing-style,
+    .spacing-style {
+      --section-top-offset: var(--header-height);
+
+      /* Any nested sections should not be offset */
+      :is(.spacing-style, .inherit-spacing) {
+        --section-top-offset: 0px;
+      }
+    }
+
+    /* Make sticky content immediately stick to the top of the page */
+    .sticky-content {
+      margin-top: calc(var(--header-height) * -1);
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:names.header",
+  "tag": "header",
+  "class": "header-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:content.logo"
+    },
+    {
+      "type": "select",
+      "id": "logo_position",
+      "label": "t:settings.position",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:options.left"
+        },
+        {
+          "value": "center",
+          "label": "t:options.center"
+        },
+        {
+          "value": "right",
+          "label": "t:options.right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "t:content.menu"
+    },
+    {
+      "type": "select",
+      "id": "menu_position",
+      "label": "t:settings.position",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:options.left"
+        },
+        {
+          "value": "center",
+          "label": "t:options.center"
+        },
+        {
+          "value": "right",
+          "label": "t:options.right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "select",
+      "id": "menu_row",
+      "label": "t:settings.row",
+      "options": [
+        {
+          "value": "top",
+          "label": "t:options.top"
+        },
+        {
+          "value": "bottom",
+          "label": "t:options.bottom"
+        }
+      ],
+      "default": "top"
+    },
+    {
+      "type": "header",
+      "content": "t:content.customer_account"
+    },
+    {
+      "type": "paragraph",
+      "content": "t:content.manage_customer_accounts"
+    },
+    {
+      "type": "header",
+      "content": "t:content.search"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search",
+      "label": "t:settings.search_icon",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "search_position",
+      "label": "t:settings.search_position",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:options.left"
+        },
+        {
+          "value": "right",
+          "label": "t:options.right"
+        }
+      ],
+      "default": "right",
+      "visible_if": "{{ section.settings.show_search }}"
+    },
+    {
+      "type": "select",
+      "id": "search_row",
+      "label": "t:settings.search_row",
+      "options": [
+        {
+          "value": "top",
+          "label": "t:options.top"
+        },
+        {
+          "value": "bottom",
+          "label": "t:options.bottom"
+        }
+      ],
+      "default": "top",
+      "visible_if": "{{ section.settings.show_search }}"
+    },
+    {
+      "type": "header",
+      "content": "t:content.localization"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_country",
+      "label": "t:settings.country_region",
+      "info": "t:info.manage_countries_regions",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "country_selector_style",
+      "label": "t:settings.flag",
+      "default": true,
+      "visible_if": "{{ section.settings.show_country }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_language",
+      "label": "t:settings.language_selector",
+      "info": "t:info.manage_languages",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "localization_font",
+      "label": "t:settings.font",
+      "options": [
+        {
+          "value": "heading",
+          "label": "t:options.heading"
+        },
+        {
+          "value": "subheading",
+          "label": "t:options.subheading"
+        },
+        {
+          "value": "body",
+          "label": "t:options.body"
+        },
+        {
+          "value": "accent",
+          "label": "t:options.accent"
+        }
+      ],
+      "default": "heading",
+      "visible_if": "{{ section.settings.show_country or section.settings.show_language }}"
+    },
+    {
+      "type": "select",
+      "id": "localization_font_size",
+      "label": "t:settings.size",
+      "options": [
+        {
+          "value": "0.625rem",
+          "label": "10px"
+        },
+        {
+          "value": "0.75rem",
+          "label": "12px"
+        },
+        {
+          "value": "0.875rem",
+          "label": "14px"
+        },
+        {
+          "value": "1rem",
+          "label": "16px"
+        },
+        {
+          "value": "1.125rem",
+          "label": "18px"
+        }
+      ],
+      "default": "1rem"
+    },
+    {
+      "type": "select",
+      "id": "localization_position",
+      "label": "t:settings.position",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:options.left"
+        },
+        {
+          "value": "right",
+          "label": "t:options.right"
+        }
+      ],
+      "default": "right",
+      "visible_if": "{{ section.settings.show_country or section.settings.show_language }}"
+    },
+    {
+      "type": "select",
+      "id": "localization_row",
+      "label": "t:settings.row",
+      "options": [
+        {
+          "value": "top",
+          "label": "t:options.top"
+        },
+        {
+          "value": "bottom",
+          "label": "t:options.bottom"
+        }
+      ],
+      "default": "top",
+      "visible_if": "{{ section.settings.show_country or section.settings.show_language }}"
+    },
+    {
+      "type": "header",
+      "content": "t:content.appearance"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "t:settings.width",
+      "options": [
+        {
+          "value": "page-width",
+          "label": "t:options.page"
+        },
+        {
+          "value": "full-width",
+          "label": "t:options.full"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "section_height",
+      "label": "t:settings.height",
+      "options": [
+        {
+          "value": "compact",
+          "label": "t:options.compact"
+        },
+        {
+          "value": "standard",
+          "label": "t:options.standard"
+        }
+      ],
+      "default": "standard"
+    },
+    {
+      "type": "select",
+      "id": "enable_sticky_header",
+      "label": "t:settings.sticky_header",
+      "options": [
+        {
+          "value": "always",
+          "label": "t:options.always"
+        },
+        {
+          "value": "scroll-up",
+          "label": "t:options.on_scroll_up"
+        },
+        {
+          "value": "never",
+          "label": "t:options.never"
+        }
+      ],
+      "default": "always"
+    },
+    {
+      "type": "range",
+      "id": "divider_width",
+      "label": "t:settings.divider_thickness",
+      "min": 0,
+      "max": 5,
+      "step": 0.5,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ section.settings.menu_row == 'bottom' or section.settings.localization_row == 'bottom' or section.settings.search_row == 'bottom' }}"
+    },
+    {
+      "type": "select",
+      "id": "divider_size",
+      "label": "t:settings.divider_width",
+      "options": [
+        {
+          "value": "page-width",
+          "label": "t:options.page"
+        },
+        {
+          "value": "full-width",
+          "label": "t:options.full"
+        }
+      ],
+      "visible_if": "{{ section.settings.divider_width > 0 and section.settings.menu_row == 'bottom' or section.settings.localization_row == 'bottom' or section.settings.search_row == 'bottom' }}"
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "label": "t:settings.border_width",
+      "min": 0,
+      "max": 5,
+      "step": 0.5,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "t:content.colors"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme_top",
+      "label": "t:settings.default",
+      "default": "primary"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme_bottom",
+      "label": "t:settings.bottom_row",
+      "default": "primary",
+      "visible_if": "{{ section.settings.menu_row == 'bottom' or section.settings.localization_row == 'bottom' or section.settings.search_row == 'bottom' }}"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme_transparent",
+      "label": "t:settings.inverse",
+      "default": "primary",
+      "visible_if": "{{ section.settings.enable_transparent_header_home or section.settings.enable_transparent_header_product or section.settings.enable_transparent_header_collection }}"
+    },
+    {
+      "type": "header",
+      "content": "t:content.home_page"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_transparent_header_home",
+      "label": "t:settings.transparent_background",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "home_color_scheme",
+      "label": "t:settings.color_scheme",
+      "options": [
+        {
+          "value": "default",
+          "label": "t:options.default"
+        },
+        {
+          "value": "inverse",
+          "label": "t:options.inverse"
+        }
+      ],
+      "default": "default",
+      "visible_if": "{{ section.settings.enable_transparent_header_home }}"
+    },
+    {
+      "type": "header",
+      "content": "t:content.product_page"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_transparent_header_product",
+      "label": "t:settings.transparent_background",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "product_color_scheme",
+      "label": "t:settings.color_scheme",
+      "options": [
+        {
+          "value": "default",
+          "label": "t:options.default"
+        },
+        {
+          "value": "inverse",
+          "label": "t:options.inverse"
+        }
+      ],
+      "default": "default",
+      "visible_if": "{{ section.settings.enable_transparent_header_product }}"
+    },
+    {
+      "type": "header",
+      "content": "t:content.collection_page"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_transparent_header_collection",
+      "label": "t:settings.transparent_background",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "collection_color_scheme",
+      "label": "t:settings.color_scheme",
+      "options": [
+        {
+          "value": "default",
+          "label": "t:options.default"
+        },
+        {
+          "value": "inverse",
+          "label": "t:options.inverse"
+        }
+      ],
+      "default": "default",
+      "visible_if": "{{ section.settings.enable_transparent_header_collection }}"
+    }
+  ],
+  "presets": []
+}
+{% endschema %}
+
+{% include 'alireviews_aggregateRating' %}
