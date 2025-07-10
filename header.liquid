@@ -128,6 +128,9 @@
   endif
 
   assign bottom_row_blocks = bottom_row_blocks | split: ',' | compact
+  {% if bottom_row_blocks.size == 0 %}
+    {% assign rows = 'top' | split: ',' %}
+  {% endif %}
 
   if section.settings.section_height == 'compact'
     assign header_height_class = ' header--compact'
