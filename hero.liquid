@@ -65,13 +65,20 @@
 
     .cta-button {
       background: white;
-      color: #1E2D32;
       font-weight: 700;
       font-size: 0.9rem;
       padding: 0.75rem 1.5rem;
       border-radius: 9999px;
       text-decoration: none;
       box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      display: inline-block;
+    }
+
+    .cta-button span {
+      background-image: linear-gradient(90deg, #000, #666);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
     }
 
     .hero__media-wrapper {
@@ -105,7 +112,8 @@
       height: 100px;
       left: 75%;
       top: 15%;
-      transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%) rotate(var(--badge-rot, 0deg));
+      transform-origin: center;
       z-index: 5;
       pointer-events: none;
     }
@@ -157,7 +165,7 @@
       <span class="line2">Tail–Wagging Dog Food.</span>
     </h1>
     <p>Real ingredients for real pets, because they deserve nothing less.</p>
-    <a class="cta-button" href="#">Shop food</a>
+    <a class="cta-button" href="#"><span>Shop food</span></a>
   </div>
 
   <div class="hero__media-wrapper">
@@ -180,11 +188,17 @@
 <script>
   document.addEventListener('scroll', () => {
     const bowl = document.querySelector('.bowl');
+    const badge = document.querySelector('.vet-badge');
     const scrollY = window.scrollY;
 
     if (bowl) {
       const deg = scrollY * 0.25;
       bowl.style.setProperty('--rot', `${deg}deg`);
+    }
+
+    if (badge) {
+      const badgeDeg = scrollY * 0.1;
+      badge.style.setProperty('--badge-rot', `${badgeDeg}deg`);
     }
   });
 </script>
