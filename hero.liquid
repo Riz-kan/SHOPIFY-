@@ -9,7 +9,7 @@
 
     body {
       font-family: 'Inter', sans-serif;
-      background: #3F8E6D;
+      background: #0D3B66;
     }
 
     .hero {
@@ -48,11 +48,13 @@
     }
 
     .hero__content-wrapper h1 .line1 {
-      color: white;
+      color: #000;
     }
 
     .hero__content-wrapper h1 .line2 {
-      color: #C9E7F2;
+      background: linear-gradient(90deg, #007BFF, #28A745);
+      -webkit-background-clip: text;
+      color: transparent;
     }
 
     .hero__content-wrapper p {
@@ -63,13 +65,20 @@
 
     .cta-button {
       background: white;
-      color: #1E2D32;
       font-weight: 700;
       font-size: 0.9rem;
       padding: 0.75rem 1.5rem;
       border-radius: 9999px;
       text-decoration: none;
       box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      display: inline-block;
+    }
+
+    .cta-button span {
+      background-image: linear-gradient(90deg, #000, #666);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
     }
 
     .hero__media-wrapper {
@@ -101,7 +110,10 @@
       position: absolute;
       width: 100px;
       height: 100px;
-      transform: translate(-50%, -50%);
+      left: 80%;
+      top: 8%;
+      transform: translate(-50%, -50%) rotate(var(--badge-rot, 0deg));
+      transform-origin: center;
       z-index: 5;
       pointer-events: none;
     }
@@ -153,7 +165,7 @@
       <span class="line2">Tail–Wagging Dog Food.</span>
     </h1>
     <p>Real ingredients for real pets, because they deserve nothing less.</p>
-    <a class="cta-button" href="#">Shop food</a>
+    <a class="cta-button" href="#"><span>Shop food</span></a>
   </div>
 
   <div class="hero__media-wrapper">
@@ -185,13 +197,8 @@
     }
 
     if (badge) {
-      const t = Math.min(scrollY / 600, 1);
-      const r = 220;
-      const cx = window.innerWidth * 0.72;
-      const cy = 320;
-      const angle = Math.PI * 0.7 * t + Math.PI * 0.15;
-      badge.style.left = `${cx - r * Math.cos(angle)}px`;
-      badge.style.top = `${cy + r * Math.sin(angle)}px`;
+      const badgeDeg = scrollY * 0.1;
+      badge.style.setProperty('--badge-rot', `${badgeDeg}deg`);
     }
   });
 </script>
