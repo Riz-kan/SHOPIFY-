@@ -48,11 +48,13 @@
     }
 
     .hero__content-wrapper h1 .line1 {
-      color: white;
+      color: #000;
     }
 
     .hero__content-wrapper h1 .line2 {
-      color: #C9E7F2;
+      background: linear-gradient(90deg, #007BFF, #28A745);
+      -webkit-background-clip: text;
+      color: transparent;
     }
 
     .hero__content-wrapper p {
@@ -101,6 +103,8 @@
       position: absolute;
       width: 100px;
       height: 100px;
+      left: 75%;
+      top: 15%;
       transform: translate(-50%, -50%);
       z-index: 5;
       pointer-events: none;
@@ -176,22 +180,11 @@
 <script>
   document.addEventListener('scroll', () => {
     const bowl = document.querySelector('.bowl');
-    const badge = document.querySelector('.vet-badge');
     const scrollY = window.scrollY;
 
     if (bowl) {
       const deg = scrollY * 0.25;
       bowl.style.setProperty('--rot', `${deg}deg`);
-    }
-
-    if (badge) {
-      const t = Math.min(scrollY / 600, 1);
-      const r = 220;
-      const cx = window.innerWidth * 0.72;
-      const cy = 320;
-      const angle = Math.PI * 0.7 * t + Math.PI * 0.15;
-      badge.style.left = `${cx - r * Math.cos(angle)}px`;
-      badge.style.top = `${cy + r * Math.sin(angle)}px`;
     }
   });
 </script>
