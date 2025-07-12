@@ -4,9 +4,14 @@
 %}
 
 {% capture media %}
-  {% if section.settings.badge_text != blank %}
-    <div class="vet-badge">{{ section.settings.badge_text }}</div>
-  {% endif %}
+    {% if section.settings.badge_text != blank %}
+      <div class="vet-badge">
+        <svg viewBox="0 0 100 100" class="badge-star">
+          <path d="M50 0L60 35L100 50L60 65L50 100L40 65L0 50L40 35Z" fill="#1E2D32"/>
+        </svg>
+        <span>{{ section.settings.badge_text }}</span>
+      </div>
+    {% endif %}
 
   {% if section.settings.image_1 != blank %}
     {{
@@ -66,12 +71,13 @@
 </div>
 
 <script>
+  const bowl = document.querySelector('.bowl');
   document.addEventListener('scroll', function () {
-    const bowl = document.querySelector('.bowl');
     if (!bowl) return;
-
-    const rotateDeg = window.scrollY * 0.25; // speed factor
-    bowl.style.transform = `translateX(-50%) rotate(${rotateDeg}deg)`;
+    const rotateDeg = window.scrollY * 0.15;
+    requestAnimationFrame(() => {
+      bowl.style.setProperty('--rot', rotateDeg + 'deg');
+    });
   });
 </script>
 
@@ -91,11 +97,12 @@
   .hero::before {
     content: '';
     position: absolute;
-    top: 0; right: -20%;
-    width: 75%; height: 100%;
-    background-color: #E8F6FA;
-    border-top-left-radius: 100% 50%;
-    border-bottom-left-radius: 100% 50%;
+    top: 0;
+    right: -10%;
+    width: 60%;
+    height: 100%;
+    background-color: #BAF1DB;
+    border-radius: 0 60% 60% 0;
     z-index: 0;
   }
   .hero__container {
@@ -107,34 +114,37 @@
     z-index: 1;
   }
   .hero__content-wrapper {
-    max-width: 550px;
+    max-width: 600px;
+    padding-left: 2rem;
     z-index: 2;
+    text-align: left;
   }
   .hero__content-wrapper h1 {
-    font-size: 2.8rem;
-    font-weight: 800;
+    font-family: 'Sora', sans-serif;
+    font-size: 3rem;
+    font-weight: 900;
     color: #1E2D32;
-    line-height: 1.2;
+    line-height: 1.1;
     margin-bottom: 1rem;
   }
   .hero__content-wrapper p {
-    font-size: 1rem;
-    color: #444;
-    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+    color: rgba(30, 45, 50, 0.8);
+    margin-bottom: 1.75rem;
   }
   .cta-button {
     display: inline-block;
     background-color: #ffffff;
     color: #1E2D32;
     padding: 0.75rem 1.5rem;
-    border-radius: 30px;
+    border-radius: 40px;
     font-weight: 600;
     text-decoration: none;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
     transition: background 0.3s ease;
   }
   .cta-button:hover {
-    background-color: #f0f0f0;
+    background-color: #f5f5f5;
   }
   .hero__media-wrapper {
     position: relative;
@@ -150,28 +160,42 @@
     max-width: 450px;
     height: auto;
     z-index: 2;
+    filter: drop-shadow(0 6px 15px rgba(0,0,0,0.2));
   }
   .bowl {
     max-width: 140px;
     position: absolute;
     bottom: 0;
-    left: 25%;
+    left: 0;
     z-index: 3;
+    filter: drop-shadow(0 6px 10px rgba(0,0,0,0.25));
     transform-origin: center;
     transition: transform 0.1s linear;
+    transform: rotate(var(--rot, 0deg));
   }
   .vet-badge {
     position: absolute;
     top: 25%;
     left: 10%;
-    background-color: #1E2D32;
-    color: white;
-    padding: 0.75rem 1rem;
-    border-radius: 50%;
-    font-size: 0.8rem;
-    font-weight: bold;
-    text-align: center;
+    width: 80px;
+    height: 80px;
     z-index: 4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform: rotate(-25deg);
+  }
+  .vet-badge .badge-star {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+  }
+  .vet-badge span {
+    position: relative;
+    color: white;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-align: center;
     line-height: 1.2;
   }
   @media (max-width: 1024px) {
@@ -184,13 +208,17 @@
       width: 100%;
       margin-top: 2rem;
     }
+    .hero__content-wrapper {
+      padding-left: 0;
+      text-align: center;
+    }
     .bowl {
       left: 50%;
-      transform: translateX(-50%);
+      transform: translateX(-50%) rotate(var(--rot, 0deg));
     }
     .vet-badge {
       left: 50%;
-      transform: translateX(-50%);
+      transform: translateX(-50%) rotate(-25deg);
       top: 5%;
     }
     .dog.hero__image {
