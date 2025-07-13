@@ -146,7 +146,10 @@
   <body>
     <section class="hero">
       <div class="hero-left">
-        <h1>Wholesome Goodness, <span class="highlight">Tail-Wagging Cat Food.</span></h1>
+        <h1>
+          {{ section.settings.heading_main }}
+          <span class="highlight">{{ section.settings.heading_highlight }}</span>
+        </h1>
         <p>Real ingredients for real pets, because they deserve nothing less.</p>
         <a href="/collections/all" class="cta-btn">Shop Food</a>
       </div>
@@ -184,3 +187,25 @@
     </script>
   </body>
 </html>
+{% schema %}
+{
+  "name": "Hero section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading_main",
+      "label": "Main heading",
+      "default": "Wholesome Goodness,"
+    },
+    {
+      "type": "text",
+      "id": "heading_highlight",
+      "label": "Highlight text",
+      "default": "Tail-Wagging Cat Food."
+    }
+  ],
+  "presets": [
+    { "name": "Hero section" }
+  ]
+}
+{% endschema %}
